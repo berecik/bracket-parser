@@ -1,0 +1,15 @@
+[package]
+name = "bracket-parser"
+version = "0.1.0"
+edition = "2024"
+
+# This section adds an optional binary target for demonstration
+[[bin]]
+name = "show_usage"
+path = "src/main.rs"
+
+[dependencies]
+tree-sitter = "*"
+
+[build-dependencies]
+cc = "*"
