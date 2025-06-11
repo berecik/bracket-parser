@@ -62,7 +62,111 @@ typedef enum {
   TSParseActionTypeAccept,
   TSParseActionTypeRecover,
 } TSParseActionType;
+#ifndef TREE_SITTER_PARSER_H_
+#define TREE_SITTER_PARSER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#define LANGUAGE_VERSION 14
+
+typedef uint16_t TSSymbol;
+typedef uint16_t TSFieldId;
+typedef struct TSLanguage TSLanguage;
+
+/* Parse tree node types. */
+typedef enum {
+  TSSymbolTypeRegular,
+  TSSymbolTypeAnonymous,
+  TSSymbolTypeAuxiliary,
+} TSSymbolType;
+
+/* Tree-sitter parser states. */
+typedef struct {
+  uint16_t version;
+  uint16_t state_count;
+  bool large_state_count;
+  const uint16_t *parse_table;
+  const uint16_t *small_parse_table;
+  const uint16_t *small_parse_table_map;
+  const uint32_t *parse_actions;
+  const TSSymbol *symbol_names;
+  const uint16_t *alias_map;
+  const uint16_t *token_count;
+  uint16_t token_count_external;
+  const uint32_t *alias_sequences;
+  const uint8_t *lex_fn;
+  bool (*lex_value)(TSLexer *, TSStateId);
+  bool is_symbol_external;
+  const TSSymbol *external_tokens;
+  const TSSymbol *field_map;
+  const char **field_names;
+  uint16_t field_count;
+  uint16_t large_state_count_external;
+  uint16_t symbol_count;
+  uint16_t alias_count;
+  uint16_t max_alias_sequence_length;
+  const uint8_t *lex_modes;
+  uint8_t (*lex_value_external)(TSLexer *, TSStateId, bool);
+} TSLanguage;
+
+/* Lexer structure */
+typedef struct TSLexer {
+  int32_t lookahead;
+  TSSymbol result_symbol;
+  void (*advance)(struct TSLexer *, bool);
+  void (*mark_end)(struct TSLexer *);
+  uint32_t (*get_column)(struct TSLexer *);
+  bool (*is_at_included_range_start)(const struct TSLexer *);
+  bool (*eof)(const struct TSLexer *);
+} TSLexer;
+
+/* Parser states */
+typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;
+
+typedef struct {
+  uint8_t type;
+  union {
+    TSStateId state;
+    struct {
+      TSSymbol symbol;
+      uint8_t child_count;
+    };
+  };
+} TSParseAction;
+
+typedef struct {
+  bool visible : 1;
+  bool named : 1;
+  bool structural : 1;
+  bool extra : 1;
+} TSSymbolMetadata;
+
+/* State IDs */
+typedef uint16_t TSStateId;
+
+#define STATE_COUNT 100
+#define LARGE_STATE_COUNT 20
+#define SYMBOL_COUNT 40
+
+/* Public API */
+const TSLanguage *tree_sitter_bracket_parser(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* TREE_SITTER_PARSER_H_ */
 typedef union {
   struct {
     uint8_t type;

@@ -3,13 +3,17 @@ name = "bracket-parser"
 version = "0.1.0"
 edition = "2024"
 
-# This section adds an optional binary target for demonstration
+# Define both library and binary targets
+[lib]
+name = "bracket_parser"
+path = "src/lib.rs"
+
 [[bin]]
 name = "show_usage"
 path = "src/main.rs"
 
 [dependencies]
-tree-sitter = "*"
+tree-sitter = "0.25.6"
 
 [build-dependencies]
-cc = "*"
+cc = "1.2.26"
