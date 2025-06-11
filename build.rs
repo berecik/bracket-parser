@@ -1,29 +1,32 @@
-//! Build script to compile the tree-sitter parser for bracket detection.
+//! Build script to compile the Tree-sitter grammar for bracket parsing
+
+use std::path::PathBuf;
 
 fn main() {
-    let src_dir = std::path::Path::new("src");
+    // Notify cargo to rerun the build script if the grammar file changes
+    println!("cargo:rerun-if-changed=grammar.js");
+    println!("cargo:rerun-if-changed=src/grammar.json");
 
-    // Configure the compiler to build the parser.c file
+    // Find the folder that contains grammar.js
+    let grammar_dir = PathBuf::from(".");
+
+    // Set up the build configuration for the Tree-sitter parser
     let mut c_config = cc::Build::new();
-    c_config.include(src_dir.join("tree_sitter"));
-    c_config
-        .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-but-set-variable")
-        // Use lower target macOS version to ensure compatibility
-        .flag_if_supported("-mmacosx-version-min=11.0");
+    c_config.include(&grammar_dir);
+    c_config.include(grammar_dir.join("src"));
 
-    let parser_path = src_dir.join("parser.c");
+    // Add the parser.c file
+    let parser_path = grammar_dir.join("src/parser.c");
     c_config.file(&parser_path);
+    println!("cargo:rerun-if-changed={}", parser_path.display());
 
-    // Make sure parser.c is visible to the main compilation unit
-    println!("cargo:rustc-link-search=native={}", src_dir.display());
+    // Enable C99 standard and optimize for speed
+    c_config.opt_level(2);
+    c_config.std("c99");
 
-    // The library name must match the function exported by parser.c
-    // tree_sitter_bracket_parser is the function name we need to expose
+    // Compile the parser as a static library
     c_config.compile("tree_sitter_bracket_parser");
 
-    // Tell Cargo to rerun the build script if any of these files change
-    println!("cargo:rerun-if-changed={}", parser_path.to_str().unwrap());
-    println!("cargo:rerun-if-changed=src/tree_sitter/parser.h");
-    println!("cargo:rerun-if-changed=grammar.js");
+    // Print a success message
+    println!("cargo:warning=Successfully compiled the Tree-sitter grammar for bracket parsing");
 }

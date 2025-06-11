@@ -23,8 +23,7 @@ fn main() {
 // Example 1: Basic usage with detailed character state analysis
 fn basic_usage_example() {
     // Initialize the parser
-    let mut parser = BracketParser::new()
-        .expect("Failed to initialize bracket parser");
+    let mut parser = BracketParser::new().expect("Failed to initialize bracket parser");
 
     // Sample code to analyze
     let code = "function call(param1, param2)";
@@ -38,10 +37,12 @@ fn basic_usage_example() {
     println!("{}", "-".repeat(30));
 
     for (i, ch) in code.char_indices() {
-        println!("{:<5} | {:<10} | {:<10?}", 
-                i, 
-                format!("'{}'", ch), 
-                states[i]);
+        println!(
+            "{:<5} | {:<10} | {:<10?}",
+            i,
+            format!("'{}'", ch),
+            states[i]
+        );
     }
 }
 
@@ -65,13 +66,15 @@ fn final_state_examples() {
 
     for example in examples {
         let state = parser.get_final_state(example);
-        println!("{:<40} | {:<10?}", 
-                if example.len() > 38 { 
-                    format!("{:.35}...", example) 
-                } else { 
-                    example.to_string() 
-                }, 
-                state);
+        println!(
+            "{:<40} | {:<10?}",
+            if example.len() > 38 {
+                format!("{:.35}...", example)
+            } else {
+                example.to_string()
+            },
+            state
+        );
     }
 }
 
@@ -98,7 +101,8 @@ fn typing_simulation_example() {
 fn nested_brackets_example() {
     let mut parser = BracketParser::new().expect("Failed to initialize parser");
 
-    let nested_code = "if (condition) { doSomething(); while [i < items.length] {process(items[i])} }";
+    let nested_code =
+        "if (condition) { doSomething(); while [i < items.length] {process(items[i])} }";
     let states = parser.get_all_states(nested_code);
 
     // Display the code with bracket state visualization
@@ -119,15 +123,25 @@ fn nested_brackets_example() {
     println!("{}", state_markers);
 
     // Count characters by state
-    let inside_count = states.iter().filter(|&&s| s == BracketState::Inside).count();
-    let outside_count = states.iter().filter(|&&s| s == BracketState::Outside).count();
+    let inside_count = states
+        .iter()
+        .filter(|&&s| s == BracketState::Inside)
+        .count();
+    let outside_count = states
+        .iter()
+        .filter(|&&s| s == BracketState::Outside)
+        .count();
 
     println!("\nStatistics:");
     println!("- Total characters: {}", nested_code.len());
-    println!("- Characters inside brackets: {} ({}%)", 
-             inside_count, 
-             (inside_count as f32 / nested_code.len() as f32 * 100.0).round());
-    println!("- Characters outside brackets: {} ({}%)", 
-             outside_count, 
-             (outside_count as f32 / nested_code.len() as f32 * 100.0).round());
+    println!(
+        "- Characters inside brackets: {} ({}%)",
+        inside_count,
+        (inside_count as f32 / nested_code.len() as f32 * 100.0).round()
+    );
+    println!(
+        "- Characters outside brackets: {} ({}%)",
+        outside_count,
+        (outside_count as f32 / nested_code.len() as f32 * 100.0).round()
+    );
 }

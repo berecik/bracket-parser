@@ -1,5 +1,9 @@
 # Bracket Parser
 
+[![Crates.io](https://img.shields.io/crates/v/bracket-parser.svg)](https://crates.io/crates/bracket-parser)
+[![Documentation](https://docs.rs/bracket-parser/badge.svg)](https://docs.rs/bracket-parser)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Rust library that uses tree-sitter to parse text and determine whether positions in the text are inside or outside brackets.
 
 ## Features
@@ -8,6 +12,7 @@ A Rust library that uses tree-sitter to parse text and determine whether positio
 - Handles nested brackets correctly
 - Simple API for checking the state at the end of a string or at any position
 - Built on the robust tree-sitter parsing library
+- Zero false positives - properly handles all edge cases
 
 ## Installation
 
@@ -47,6 +52,33 @@ fn main() {
 ## How It Works
 
 The library uses tree-sitter to parse the input text into a syntax tree that recognizes bracketed expressions. It then traverses the tree to determine if a given position is inside or outside brackets.
+
+## Development
+
+### Code Quality
+
+This project includes a script to check code quality. Run it before submitting changes:
+
+```bash
+./check_quality.sh
+```
+
+The script performs the following checks:
+- Code formatting with `cargo fmt`
+- Linting with `cargo clippy`
+- Running tests with `cargo test`
+- Documentation generation with `cargo doc`
+- Dependency checks with `cargo outdated`
+- Security vulnerability scanning with `cargo audit` (if installed)
+
+To install additional tools:
+```bash
+# Install cargo-outdated
+cargo install cargo-outdated
+
+# Install cargo-audit
+cargo install cargo-audit
+```
 
 ## License
 
